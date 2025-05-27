@@ -1,0 +1,17 @@
+[requires]
+libzippp/4.0
+yaml-cpp/0.6.3
+boost/1.86.0
+easyloggingpp/9.97.1
+sqlitecpp/3.3.2
+grpc/1.71.0
+
+[generators]
+CMakeDeps
+CMakeToolchain
+
+[layout]
+cmake_layout
+
+[options]
+libzippp/*:with_encryption=True

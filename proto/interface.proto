@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "protobuf_experiments";
+option java_outer_classname = "PBExperiments";
+option objc_class_prefix = "PBE";
+
+package protobuf_experiments;
+
+message Request1 {
+    bool dummy = 1;
+}
+
+message Request2 {
+    bool dummy = 1;
+}
+
+message Request {
+    oneof request {
+        Request1 request1 = 1;
+        Request2 request2 = 2;
+    }
+}
+
+message Response1 {
+    string message = 1;
+}
+
+message Response2 {
+    string message = 1;
+}
+
+message Response {
+    oneof response {
+        Response1 response1 = 1;
+        Response2 response2 = 2;
+    }
+}
