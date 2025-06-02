@@ -36,4 +36,4 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 
 # compile the message types
 protobuf_generate(TARGET ${PROJECT_NAME} LANGUAGE cpp)
-protobuf_generate(TARGET ${PROJECT_NAME} LANGUAGE python PROTOC_OUT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/python)
+protobuf_generate(TARGET ${PROJECT_NAME} LANGUAGE python PROTOC_OUT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/python/src)
