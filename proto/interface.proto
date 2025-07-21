@@ -7,32 +7,40 @@ option objc_class_prefix = "PBE";
 
 package protobuf_experiments;
 
-message Request1 {
-    bool dummy = 1;
+message MessageHeader {
+    MessageType message_type = 1;
+    uint32 version = 2;
+    string vin = 3;
 }
 
-message Request2 {
-    bool dummy = 1;
+enum MessageType {
+    UNKNOWN = 0;
+    AVAILABLE_PROJECTS_REQUEST = 1;
+    AVAILABLE_PROJECTS_RESNPOSE = 2;
+    PROJECT_REQUEST = 3;
+    PROJECT_RESPONSE = 4;
 }
 
-message Request {
-    oneof request {
-        Request1 request1 = 1;
-        Request2 request2 = 2;
-    }
+message AvailableProjectsRequest {
+    MessageHeader header = 1;
 }
 
-message Response1 {
-    string message = 1;
+message ProjectRequest {
+    MessageHeader header = 1;
+    string name = 2;
 }
 
-message Response2 {
-    string message = 1;
+message AvailableProject {
+    string name = 1;
+    uint32 crc = 2;
 }
 
-message Response {
-    oneof response {
-        Response1 response1 = 1;
-        Response2 response2 = 2;
-    }
+message AvailableProjectsResponse {
+    MessageHeader header = 1;
+    repeated AvailableProject available_projects = 2;
+}
+
+message ProjectResponse {
+    MessageHeader header = 1;
+    bytes data = 2;
 }
