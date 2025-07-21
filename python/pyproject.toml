@@ -6,6 +6,6 @@ build-backend = "setuptools.build_meta"
 name = "protobuf_experiments"
 version = "0.1.0"
 dependencies = [
-    "fastapi",
-    "protobuf"
+    "protobuf",
+    "websockets"
 ]
