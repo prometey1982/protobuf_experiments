@@ -1,6 +1,6 @@
 import asyncio
-from handlers.handlers import handler
-from handlers.ws_handler import WSHandler
+from handlers import handler
+from handlers import WSHandler
 
 def main():
     print("hello from main")

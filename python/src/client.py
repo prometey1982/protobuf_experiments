@@ -1,20 +1,26 @@
 import pathlib
 import ssl
-import proto.interface_pb2
+import proto.interface_pb2 as pb
 
 from websockets.sync.client import connect
 
 ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+ssl_context.check_hostname = False
 localhost_pem = pathlib.Path(__file__).with_name("srv_pub.pem")
-ssl_context.load_verify_locations(localhost_pem)
+ssl_context.load_verify_locations(localhost_pem, )
 
 def hello():
     uri = "wss://localhost:8080"
     with connect(uri, ssl=ssl_context) as websocket:
-        request = proto.interface_pb2.Request()
-        request.
-        websocket.send(name)
-        print(f">>> {name}")
+        header = pb.MessageHeader()
+        header.message_type = pb.AVAILABLE_PROJECTS_REQUEST
+        header.version = 1
+        header.vin = 'myvin'
+        request = pb.AvailableProjectsRequest()
+        request.header.CopyFrom(header)
+        data = request.SerializeToString()
+        websocket.send(data)
+        print(f">>> {data}")
 
         greeting = websocket.recv()
         print(f"<<< {greeting}")

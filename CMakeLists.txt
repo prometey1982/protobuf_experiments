@@ -31,7 +31,7 @@ add_executable(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
-        protobuf::libprotobuf
+    protobuf::libprotobuf
 )
 
 # compile the message types
