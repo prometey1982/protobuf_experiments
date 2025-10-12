@@ -14,12 +14,16 @@ class WSHandler:
 
     async def handle(self, websocket):
         incoming_message = await websocket.recv()
-        header = pb.MessageHeader()
-        header.ParseFromString(incoming_message)
-        print(f"header: message_type = {header.message_type}, version = {header.version}, vin = {header.vin}")
-
-
-
+        request = pb.Request()
+        request.ParseFromString(incoming_message)
+        print(f"header: request_type = {request.header.request_type}, version = {request.header.version}, vin = {request.header.vin}")
+        response = pb.Response()
+        header = pb.ResponseHeader()
+        header.version = 1
+        header.response_type = pb.ResponseType.RESP_AVAILABLE_PROJECTS
+        response.header.CopyFrom(header)
+        response_data = response.SerializeToString()
+        await websocket.send(response_data)
 
     async def run(self):
         async with serve(self.handle, "localhost", 8080, ssl=self.ssl_context) as server:

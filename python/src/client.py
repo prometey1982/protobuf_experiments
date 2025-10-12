@@ -1,3 +1,4 @@
+import asyncio
 import pathlib
 import ssl
 import proto.interface_pb2 as pb
@@ -12,18 +13,20 @@ ssl_context.load_verify_locations(localhost_pem, )
 def hello():
     uri = "wss://localhost:8080"
     with connect(uri, ssl=ssl_context) as websocket:
-        header = pb.MessageHeader()
-        header.message_type = pb.AVAILABLE_PROJECTS_REQUEST
+        header = pb.RequestHeader()
+        header.request_type = pb.REQ_AVAILABLE_PROJECTS
         header.version = 1
         header.vin = 'myvin'
-        request = pb.AvailableProjectsRequest()
+        request = pb.Request()
         request.header.CopyFrom(header)
         data = request.SerializeToString()
         websocket.send(data)
         print(f">>> {data}")
 
-        greeting = websocket.recv()
-        print(f"<<< {greeting}")
+        response_data = websocket.recv()
+        response = pb.Response()
+        response.ParseFromString(response_data)
+        print(f"header: response_type = {response.header.response_type}, version = {response.header.version}")
 
 if __name__ == "__main__":
     hello()

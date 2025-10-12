@@ -7,22 +7,29 @@ option objc_class_prefix = "PBE";
 
 package protobuf_experiments;
 
-message MessageHeader {
+message RequestHeader {
     uint32 version = 1;
-    MessageType message_type = 2;
+    RequestType request_type = 2;
     string vin = 3;
 }
 
-enum MessageType {
-    UNKNOWN = 0;
-    AVAILABLE_PROJECTS_REQUEST = 1;
-    AVAILABLE_PROJECTS_RESPONSE = 2;
-    PROJECT_REQUEST = 3;
-    PROJECT_RESPONSE = 4;
+message ResponseHeader {
+    uint32 version = 1;
+    ResponseType response_type = 2;
+}
+
+enum RequestType {
+    REQ_AVAILABLE_PROJECTS = 0;
+    REQ_PROJECT = 1;
+}
+
+enum ResponseType {
+    RESP_AVAILABLE_PROJECTS = 0;
+    RESP_PROJECT = 2;
 }
 
 message Request {
-    MessageHeader header = 1;
+    RequestHeader header = 1;
     oneof payload {
         AvailableProjectsRequest available_projects = 2;
         ProjectRequest project = 3;
@@ -37,7 +44,7 @@ message ProjectRequest {
 }
 
 message Response {
-    MessageHeader header = 1;
+    ResponseHeader header = 1;
     oneof payload {
         AvailableProjectsResponse available_projects = 2;
         ProjectResponse project = 3;

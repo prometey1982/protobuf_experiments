@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x15proto/interface.proto\x12\x14protobuf_experiments\"f\n\rMessageHeader\x12\x0f\n\x07version\x18\x01 \x01(\r\x12\x37\n\x0cmessage_type\x18\x02 \x01(\x0e\x32!.protobuf_experiments.MessageType\x12\x0b\n\x03vin\x18\x03 \x01(\t\"\xd0\x01\n\x07Request\x12\x33\n\x06header\x18\x01 \x01(\x0b\x32#.protobuf_experiments.MessageHeader\x12L\n\x12\x61vailable_projects\x18\x02 \x01(\x0b\x32..protobuf_experiments.AvailableProjectsRequestH\x00\x12\x37\n\x07project\x18\x03 \x01(\x0b\x32$.protobuf_experiments.ProjectRequestH\x00\x42\t\n\x07payload\"\x1a\n\x18\x41vailableProjectsRequest\"\x1e\n\x0eProjectRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"\xd3\x01\n\x08Response\x12\x33\n\x06header\x18\x01 \x01(\x0b\x32#.protobuf_experiments.MessageHeader\x12M\n\x12\x61vailable_projects\x18\x02 \x01(\x0b\x32/.protobuf_experiments.AvailableProjectsResponseH\x00\x12\x38\n\x07project\x18\x03 \x01(\x0b\x32%.protobuf_experiments.ProjectResponseH\x00\x42\t\n\x07payload\"-\n\x10\x41vailableProject\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0b\n\x03\x63rc\x18\x02 \x01(\r\"_\n\x19\x41vailableProjectsResponse\x12\x42\n\x12\x61vailable_projects\x18\x01 \x03(\x0b\x32&.protobuf_experiments.AvailableProject\"\x1f\n\x0fProjectResponse\x12\x0c\n\x04\x64\x61ta\x18\x01 \x01(\x0c*\x86\x01\n\x0bMessageType\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x1e\n\x1a\x41VAILABLE_PROJECTS_REQUEST\x10\x01\x12\x1f\n\x1b\x41VAILABLE_PROJECTS_RESPONSE\x10\x02\x12\x13\n\x0fPROJECT_REQUEST\x10\x03\x12\x14\n\x10PROJECT_RESPONSE\x10\x04\x42-\n\x14protobuf_experimentsB\rPBExperimentsP\x01\xa2\x02\x03PBEb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x15proto/interface.proto\x12\x14protobuf_experiments\"f\n\rRequestHeader\x12\x0f\n\x07version\x18\x01 \x01(\r\x12\x37\n\x0crequest_type\x18\x02 \x01(\x0e\x32!.protobuf_experiments.RequestType\x12\x0b\n\x03vin\x18\x03 \x01(\t\"\\\n\x0eResponseHeader\x12\x0f\n\x07version\x18\x01 \x01(\r\x12\x39\n\rresponse_type\x18\x02 \x01(\x0e\x32\".protobuf_experiments.ResponseType\"\xd0\x01\n\x07Request\x12\x33\n\x06header\x18\x01 \x01(\x0b\x32#.protobuf_experiments.RequestHeader\x12L\n\x12\x61vailable_projects\x18\x02 \x01(\x0b\x32..protobuf_experiments.AvailableProjectsRequestH\x00\x12\x37\n\x07project\x18\x03 \x01(\x0b\x32$.protobuf_experiments.ProjectRequestH\x00\x42\t\n\x07payload\"\x1a\n\x18\x41vailableProjectsRequest\"\x1e\n\x0eProjectRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"\xd4\x01\n\x08Response\x12\x34\n\x06header\x18\x01 \x01(\x0b\x32$.protobuf_experiments.ResponseHeader\x12M\n\x12\x61vailable_projects\x18\x02 \x01(\x0b\x32/.protobuf_experiments.AvailableProjectsResponseH\x00\x12\x38\n\x07project\x18\x03 \x01(\x0b\x32%.protobuf_experiments.ProjectResponseH\x00\x42\t\n\x07payload\"-\n\x10\x41vailableProject\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0b\n\x03\x63rc\x18\x02 \x01(\r\"_\n\x19\x41vailableProjectsResponse\x12\x42\n\x12\x61vailable_projects\x18\x01 \x03(\x0b\x32&.protobuf_experiments.AvailableProject\"\x1f\n\x0fProjectResponse\x12\x0c\n\x04\x64\x61ta\x18\x01 \x01(\x0c*:\n\x0bRequestType\x12\x1a\n\x16REQ_AVAILABLE_PROJECTS\x10\x00\x12\x0f\n\x0bREQ_PROJECT\x10\x01*=\n\x0cResponseType\x12\x1b\n\x17RESP_AVAILABLE_PROJECTS\x10\x00\x12\x10\n\x0cRESP_PROJECT\x10\x02\x42-\n\x14protobuf_experimentsB\rPBExperimentsP\x01\xa2\x02\x03PBEb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -32,22 +32,26 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'proto.interface_pb2', _glob
 if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'\n\024protobuf_experimentsB\rPBExperimentsP\001\242\002\003PBE'
-  _globals['_MESSAGETYPE']._serialized_start=814
-  _globals['_MESSAGETYPE']._serialized_end=948
-  _globals['_MESSAGEHEADER']._serialized_start=47
-  _globals['_MESSAGEHEADER']._serialized_end=149
-  _globals['_REQUEST']._serialized_start=152
-  _globals['_REQUEST']._serialized_end=360
-  _globals['_AVAILABLEPROJECTSREQUEST']._serialized_start=362
-  _globals['_AVAILABLEPROJECTSREQUEST']._serialized_end=388
-  _globals['_PROJECTREQUEST']._serialized_start=390
-  _globals['_PROJECTREQUEST']._serialized_end=420
-  _globals['_RESPONSE']._serialized_start=423
-  _globals['_RESPONSE']._serialized_end=634
-  _globals['_AVAILABLEPROJECT']._serialized_start=636
-  _globals['_AVAILABLEPROJECT']._serialized_end=681
-  _globals['_AVAILABLEPROJECTSRESPONSE']._serialized_start=683
-  _globals['_AVAILABLEPROJECTSRESPONSE']._serialized_end=778
-  _globals['_PROJECTRESPONSE']._serialized_start=780
-  _globals['_PROJECTRESPONSE']._serialized_end=811
+  _globals['_REQUESTTYPE']._serialized_start=908
+  _globals['_REQUESTTYPE']._serialized_end=966
+  _globals['_RESPONSETYPE']._serialized_start=968
+  _globals['_RESPONSETYPE']._serialized_end=1029
+  _globals['_REQUESTHEADER']._serialized_start=47
+  _globals['_REQUESTHEADER']._serialized_end=149
+  _globals['_RESPONSEHEADER']._serialized_start=151
+  _globals['_RESPONSEHEADER']._serialized_end=243
+  _globals['_REQUEST']._serialized_start=246
+  _globals['_REQUEST']._serialized_end=454
+  _globals['_AVAILABLEPROJECTSREQUEST']._serialized_start=456
+  _globals['_AVAILABLEPROJECTSREQUEST']._serialized_end=482
+  _globals['_PROJECTREQUEST']._serialized_start=484
+  _globals['_PROJECTREQUEST']._serialized_end=514
+  _globals['_RESPONSE']._serialized_start=517
+  _globals['_RESPONSE']._serialized_end=729
+  _globals['_AVAILABLEPROJECT']._serialized_start=731
+  _globals['_AVAILABLEPROJECT']._serialized_end=776
+  _globals['_AVAILABLEPROJECTSRESPONSE']._serialized_start=778
+  _globals['_AVAILABLEPROJECTSRESPONSE']._serialized_end=873
+  _globals['_PROJECTRESPONSE']._serialized_start=875
+  _globals['_PROJECTRESPONSE']._serialized_end=906
 # @@protoc_insertion_point(module_scope)
