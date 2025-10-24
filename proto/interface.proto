@@ -21,11 +21,15 @@ message ResponseHeader {
 enum RequestType {
     REQ_AVAILABLE_PROJECTS = 0;
     REQ_PROJECT = 1;
+    REQ_LOGS_UPLOAD = 2;
+    REQ_FLASH_UPLOAD = 3;
 }
 
 enum ResponseType {
     RESP_AVAILABLE_PROJECTS = 0;
     RESP_PROJECT = 2;
+    RESP_LOGS_UPLOAD = 3;
+    RESP_FLASH_UPLOAD = 4;
 }
 
 message Request {
@@ -33,6 +37,8 @@ message Request {
     oneof payload {
         AvailableProjectsRequest available_projects = 2;
         ProjectRequest project = 3;
+        LogsUploadRequest logs_upload = 4;
+        FlashUploadRequest flash_upload = 5;
     }
 }
 
@@ -41,6 +47,16 @@ message AvailableProjectsRequest {
 
 message ProjectRequest {
     string name = 1;
+}
+
+message LogsUploadRequest {
+    string name = 1;
+    bytes payload = 2;
+}
+
+message FlashUploadRequest {
+    string name = 1;
+    bytes payload = 2;
 }
 
 message Response {
@@ -62,4 +78,10 @@ message AvailableProjectsResponse {
 
 message ProjectResponse {
     bytes data = 1;
+}
+
+message LogsUploadResponse {
+}
+
+message FlashUploadResponse {
 }
