@@ -30,6 +30,7 @@ enum ResponseType {
     RESP_PROJECT = 2;
     RESP_LOGS_UPLOAD = 3;
     RESP_FLASH_UPLOAD = 4;
+    RESP_ERROR = 5;
 }
 
 message Request {

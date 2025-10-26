@@ -1,12 +1,14 @@
 import asyncio
 import yaml
-from handlers import handler
-from handlers import WSHandler
+import handlers
+from config import Config
+#from handlers import handler
+#from handlers import WSHandler
 
 def main():
     print("hello from main")
-    handler()
-    ws_handler = WSHandler()
+    config = Config("srv_conf.yaml")
+    ws_handler = handlers.WSHandler(config)
     asyncio.run(ws_handler.run())
 
 if __name__ == "__main__":
