@@ -10,6 +10,7 @@ ssl_context.check_hostname = False
 localhost_pem = pathlib.Path(__file__).with_name("srv_pub.pem")
 ssl_context.load_verify_locations(localhost_pem, )
 
+
 def hello():
     uri = "wss://localhost:8080"
     with connect(uri, ssl=ssl_context) as websocket:
@@ -27,6 +28,10 @@ def hello():
         response = pb.Response()
         response.ParseFromString(response_data)
         print(f"header: response_type = {response.header.response_type}, version = {response.header.version}")
+        if response.available_projects:
+            for available_project in response.available_projects.available_projects:
+                print(f"name = {available_project.name}, crc = {available_project.crc}")
+
 
 if __name__ == "__main__":
     hello()

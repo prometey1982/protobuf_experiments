@@ -5,9 +5,11 @@ import ssl
 
 from websockets.asyncio.server import serve
 
+
 class WSHandler:
-    def __init__(self, config):
+    def __init__(self, config, db):
         self._config = config
+        self._db = db
         self._handlers = {
             pb.RequestType.REQ_AVAILABLE_PROJECTS: self._handle_available_projects,
             pb.RequestType.REQ_PROJECT: self._handle_project,
@@ -28,7 +30,8 @@ class WSHandler:
         await websocket.send(response_data)
 
     async def _process_proto_request(self, request: pb.Request, response: pb.Response):
-        print(f"header: request_type = {request.header.request_type}, version = {request.header.version}, vin = {request.header.vin}")
+        print(
+            f"header: request_type = {request.header.request_type}, version = {request.header.version}, vin = {request.header.vin}")
         response.header.version = 1
         try:
             handler = self._handlers.get(request.header.request_type)
@@ -44,10 +47,11 @@ class WSHandler:
         vin = request.header.vin
         available_projects_response = pb.AvailableProjectsResponse()
         available_projects = []
-        available_project = pb.AvailableProject()
-        available_project.name = "test_project"
-        available_project.crc = 0x1234
-        available_projects.append(available_project)
+        for project in await self._db.get_available_projects(vin):
+            available_project = pb.AvailableProject()
+            available_project.name = project.name
+            available_project.crc = project.crc
+            available_projects.append(available_project)
         response.header.response_type = pb.ResponseType.RESP_AVAILABLE_PROJECTS
         response.available_projects.available_projects.extend(available_projects)
 
@@ -61,5 +65,6 @@ class WSHandler:
         pass
 
     async def run(self):
-        async with serve(self.handle, self._config.connection.host, self._config.connection.port, ssl=self.ssl_context) as server:
+        async with serve(self.handle, self._config.connection.host, self._config.connection.port,
+                         ssl=self.ssl_context) as server:
             await server.serve_forever()
