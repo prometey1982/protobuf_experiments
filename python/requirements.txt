@@ -1,0 +1,4 @@
+protobuf
+websockets
+PyYAML
+aiosqlite
