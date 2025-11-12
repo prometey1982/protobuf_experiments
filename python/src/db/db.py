@@ -1,5 +1,3 @@
-from collections.abc import coroutine
-
 import aiosqlite
 import asyncio
 from contextlib import asynccontextmanager

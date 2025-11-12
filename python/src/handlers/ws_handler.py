@@ -2,6 +2,8 @@ import proto.interface_pb2 as pb
 import asyncio
 import pathlib
 import ssl
+import logging
+from google.protobuf import text_format
 
 from websockets.asyncio.server import serve
 
@@ -10,6 +12,7 @@ class WSHandler:
     def __init__(self, config, db):
         self._config = config
         self._db = db
+        self._logger = logging.getLogger(__name__)
         self._handlers = {
             pb.RequestType.REQ_AVAILABLE_PROJECTS: self._handle_available_projects,
             pb.RequestType.REQ_PROJECT: self._handle_project,
@@ -30,17 +33,16 @@ class WSHandler:
         await websocket.send(response_data)
 
     async def _process_proto_request(self, request: pb.Request, response: pb.Response):
-        print(
-            f"header: request_type = {request.header.request_type}, version = {request.header.version}, vin = {request.header.vin}")
+        self._logger.debug(text_format.MessageToString(request))
         response.header.version = 1
         try:
             handler = self._handlers.get(request.header.request_type)
             if handler:
                 await handler(request, response)
             else:
-                print(f"Unknown request_type = {request.header.request_type}")
+                self._logger.error(f"Unknown request_type = {request.header.request_type}")
         except Exception as e:
-            print(f"Request process error = {e}")
+            self._logger.error(f"Request process error = {e}")
             response.header.response_type = pb.ResponseType.RESP_ERROR
 
     async def _handle_available_projects(self, request: pb.Request, response: pb.Response):
