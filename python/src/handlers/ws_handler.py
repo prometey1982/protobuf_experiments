@@ -4,14 +4,15 @@ import pathlib
 import ssl
 import logging
 from google.protobuf import text_format
+from data_providers import DataProviderBase
 
 from websockets.asyncio.server import serve
 
 
 class WSHandler:
-    def __init__(self, config, db):
+    def __init__(self, config, data_provider: DataProviderBase):
         self._config = config
-        self._db = db
+        self._data_provider = data_provider
         self._logger = logging.getLogger(__name__)
         self._handlers = {
             pb.RequestType.REQ_AVAILABLE_PROJECTS: self._handle_available_projects,

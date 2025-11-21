@@ -1,18 +1,7 @@
 import aiosqlite
 import asyncio
 from contextlib import asynccontextmanager
-from dataclasses import dataclass
-
-
-@dataclass
-class Project:
-    name: str
-    crc: int
-
-
-@dataclass
-class ProjectData:
-    data: bytes
+from models import Project, ProjectData
 
 
 class DB:
@@ -50,16 +39,31 @@ class DB:
                     content BLOB,
                     FOREIGN KEY(project_id) REFERENCES project(id) ON DELETE CASCADE
                 );
+                CREATE TABLE IF NOT EXISTS logs (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    vin TEXT NOT NULL,
+                    name TEXT NOT NULL,
+                    crc INTEGER NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS log_data (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    log_id INTEGER NOT NULL,
+                    content BLOB,
+                    FOREIGN KEY(log_id) REFERENCES logs(id) ON DELETE CASCADE
+                );
             """)
 
             await cursor.executescript("""
                 CREATE INDEX IF NOT EXISTS idx_project_data_project_id ON project_data(project_id);
             """)
+            await cursor.executescript("""
+                CREATE INDEX IF NOT EXISTS idx_log_data_log_id ON log_data(log_id);
+            """)
 
             await cursor.execute("insert into project(vin, name, crc) values (?, ?, ?)", ("myvin", "test1", 0x1011))
             await cursor.execute("insert into project(vin, name, crc) values (?, ?, ?)", ("myvin", "test2", 0x1012))
 
-    async def get_available_projects(self, vin: str) -> Project:
+    async def get_available_projects(self, vin: str) -> list[Project]:
         async with self._get_cursor() as cursor:
             await cursor.execute("select name, crc from project where vin = ?", (vin,))
             rows = await cursor.fetchall()
@@ -75,3 +79,9 @@ class DB:
                 return ProjectData(data=rows[0])
 
             return None
+
+    async def get_available_logs(self, vin: str):
+        pass
+
+    async def get_log_data(self, vin: str, log_name: str):
+        pass

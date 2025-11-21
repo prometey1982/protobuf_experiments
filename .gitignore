@@ -176,3 +176,4 @@ cython_debug/
 CMakeUserPresets.json 
 CMakeCache.txt
 CMakeFiles
+database.db3

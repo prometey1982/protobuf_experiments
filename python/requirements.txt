@@ -1,5 +1,0 @@
-protobuf
-websockets
-PyYAML
-aiosqlite
-loguru
