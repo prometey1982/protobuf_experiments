@@ -50,7 +50,7 @@ class WSHandler:
         vin = request.header.vin
         available_projects_response = pb.AvailableProjectsResponse()
         available_projects = []
-        for project in await self._db.get_available_projects(vin):
+        for project in await self._data_provider.get_available_projects(vin):
             available_project = pb.AvailableProject()
             available_project.name = project.name
             available_project.crc = project.crc

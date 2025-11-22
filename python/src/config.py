@@ -31,6 +31,9 @@ class Config:
                 return default
         return value
 
+    def to_dict(self, key: str) -> Any:
+        return self._data[key]
+
 
 class DictAsObject:
     """Класс для преобразования словаря в объект с атрибутами"""

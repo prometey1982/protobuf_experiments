@@ -1,9 +1,18 @@
 import asyncio
 import handlers
 import logging
+import logging.config
 import sys
 from config import Config
 from db import DB
+from pathlib import Path
+
+
+def setup_logging(config):
+    log_dir = Path(config["log_dir"])
+    log_dir.mkdir(exist_ok=True)
+
+    logging.config.dictConfig(config)
 
 
 async def main_coro(config, db, logger):
@@ -21,11 +30,7 @@ async def main_coro(config, db, logger):
 def main():
     config = Config("srv_conf.yaml")
     db = DB(config)
-    logging.basicConfig(
-        level=logging.DEBUG,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-        stream=sys.stdout
-    )
+    setup_logging(config.to_dict("logging"))
     logger = logging.getLogger('my_app')
     asyncio.run(main_coro(config, db, logger))
 

@@ -5,3 +5,75 @@ connection:
 
 database:
   file: "database.db3"
+
+logging:
+  version: 1
+  disable_existing_loggers: false
+  log_dir: "logs"
+  
+  # Настройки по окружениям
+  environments:
+    development:
+      level: "DEBUG"
+      handlers: ["console", "file"]
+    production:
+      level: "INFO"
+      handlers: ["file", "error_file"]
+    testing:
+      level: "WARNING"
+      handlers: ["console"]
+  
+  formatters:
+    simple:
+      format: "[%(levelname)s] %(name)s: %(message)s"
+    verbose:
+      format: "%(asctime)s [%(levelname)s] %(name)s.%(funcName)s:%(lineno)d - %(message)s"
+      datefmt: "%Y-%m-%d %H:%M:%S"
+  
+  handlers:
+    console:
+      class: "logging.StreamHandler"
+      formatter: "simple"
+      level: "INFO"
+    
+    debug_file:
+      class: "logging.handlers.TimedRotatingFileHandler"
+      level: "DEBUG"
+      formatter: "verbose"
+      filename: "logs/debug.log"
+      when: "midnight"
+      interval: 1
+      backupCount: 7
+      encoding: "utf8"
+    
+    app_file:
+      class: "logging.handlers.RotatingFileHandler"
+      level: "INFO"
+      formatter: "verbose"
+      filename: "logs/application.log"
+      maxBytes: 10485760
+      backupCount: 10
+      encoding: "utf8"
+
+  root:
+    level: "DEBUG"
+    handlers: ["console", "debug_file", "app_file"]
+    propagate: true
+
+  loggers:
+    # Основное приложение
+    src:
+      level: "DEBUG"
+      handlers: ["console", "debug_file", "app_file"]
+      propagate: false
+    
+    # Сторонние библиотеки
+    aiohttp:
+      level: "WARNING"
+      handlers: ["app_file"]
+      propagate: false
+    
+    sqlalchemy.engine:
+      level: "WARNING"
+      handlers: ["app_file"]
+      propagate: false
