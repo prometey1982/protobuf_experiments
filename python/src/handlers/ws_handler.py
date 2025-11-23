@@ -1,18 +1,18 @@
 import proto.interface_pb2 as pb
-import asyncio
-import pathlib
 import ssl
 import logging
 from google.protobuf import text_format
 from data_providers import DataProviderBase
+from notification import NotificationCallbackBase
 
 from websockets.asyncio.server import serve
 
 
 class WSHandler:
-    def __init__(self, config, data_provider: DataProviderBase):
+    def __init__(self, config, data_provider: DataProviderBase, notification_callback: NotificationCallbackBase):
         self._config = config
         self._data_provider = data_provider
+        self._notification_callback = notification_callback
         self._logger = logging.getLogger(__name__)
         self._handlers = {
             pb.RequestType.REQ_AVAILABLE_PROJECTS: self._handle_available_projects,
@@ -48,6 +48,7 @@ class WSHandler:
 
     async def _handle_available_projects(self, request: pb.Request, response: pb.Response):
         vin = request.header.vin
+        await self._notification_callback.on_request_received(f"Запрос доступных проектов от {vin}")
         available_projects_response = pb.AvailableProjectsResponse()
         available_projects = []
         for project in await self._data_provider.get_available_projects(vin):
@@ -59,15 +60,23 @@ class WSHandler:
         response.available_projects.available_projects.extend(available_projects)
 
     async def _handle_project(self, request: pb.Request, response: pb.Response):
-        pass
+        vin = request.header.vin
+        self._notification_callback.on_request_received(f"Запрос проекта от {vin}")
 
     async def _handle_logs_upload(self, request: pb.Request, response: pb.Response):
-        pass
+        vin = request.header.vin
+        self._notification_callback.on_request_received(f"Запрос на загрузку логов от {vin}")
 
     async def _handle_flash_upload(self, request: pb.Request, response: pb.Response):
-        pass
+        vin = request.header.vin
+        self._notification_callback.on_request_received(f"Запрос на загрузку прошивки от {vin}")
 
     async def run(self):
-        async with serve(self.handle, self._config.connection.host, self._config.connection.port,
-                         ssl=self.ssl_context) as server:
-            await server.serve_forever()
+        self._server = await serve(self.handle, self._config.connection.host, self._config.connection.port,
+                         ssl=self.ssl_context)
+        await self._server.serve_forever()
+
+    async def stop(self):
+        if self._server:
+            self._server.close()
+            await self._server.wait_closed()

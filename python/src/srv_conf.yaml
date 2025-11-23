@@ -6,6 +6,11 @@ connection:
 database:
   file: "database.db3"
 
+bot:
+    token: ""
+    users_to_notify:
+      - 123
+
 logging:
   version: 1
   disable_existing_loggers: false
