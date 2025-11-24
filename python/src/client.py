@@ -1,5 +1,7 @@
 import pathlib
 import ssl
+from collections import namedtuple
+
 import proto.interface_pb2 as pb
 
 from websockets.sync.client import connect
@@ -38,8 +40,24 @@ def hello():
             print(f"header: response_type = {response.header.response_type}, version = {response.header.version}")
 
             if response.available_projects:
-                for available_project in response.available_projects.available_projects:
+                Project = namedtuple('Project', ['name', 'crc'])
+                projects_to_request = {Project(x.name, x.crc) for x in response.available_projects.available_projects}
+                for available_project in projects_to_request:
                     print(f"name = {available_project.name}, crc = {available_project.crc}")
+                    header.request_type = pb.REQ_PROJECT
+                    request = pb.Request()
+                    request.header.CopyFrom(header)
+                    project_request = pb.ProjectRequest()
+                    project_request.name = available_project.name
+                    request.project.CopyFrom(project_request)
+                    data = request.SerializeToString()
+                    websocket.send(data)
+                    response_data = websocket.recv()
+                    response = pb.Response()
+                    response.ParseFromString(response_data)
+                    print(f"header: response_type = {response.header.response_type}, version = {response.header.version}")
+
+
             else:
                 print("No available projects received")
 

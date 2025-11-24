@@ -27,18 +27,18 @@ class WSHandler:
 
     async def handle(self, websocket):
         self._websockets.append(websocket)
-        incoming_message = await websocket.recv()
-        self._logger.debug(f"Incoming message {incoming_message}, type {type(incoming_message)}")
-        if type(incoming_message) == str:
-            array_msg = bytearray()
-            array_msg.extend(map(ord, incoming_message))
-            incoming_message = array_msg
-        request = pb.Request()
-        request.ParseFromString(incoming_message)
-        response = pb.Response()
-        await self._process_proto_request(request, response)
-        response_data = response.SerializeToString()
-        await websocket.send(response_data)
+        async for incoming_message in websocket:
+            self._logger.debug(f"Incoming message {incoming_message}, type {type(incoming_message)}")
+            if type(incoming_message) == str:
+                array_msg = bytearray()
+                array_msg.extend(map(ord, incoming_message))
+                incoming_message = array_msg
+            request = pb.Request()
+            request.ParseFromString(incoming_message)
+            response = pb.Response()
+            await self._process_proto_request(request, response)
+            response_data = response.SerializeToString()
+            await websocket.send(response_data)
 
     async def _process_proto_request(self, request: pb.Request, response: pb.Response):
         self._logger.debug(text_format.MessageToString(request))
@@ -56,7 +56,6 @@ class WSHandler:
     async def _handle_available_projects(self, request: pb.Request, response: pb.Response):
         vin = request.header.vin
         await self._notification_callback.on_request_received(f"Запрос доступных проектов от {vin}")
-        available_projects_response = pb.AvailableProjectsResponse()
         available_projects = []
         for project in await self._data_provider.get_available_projects(vin):
             available_project = pb.AvailableProject()
@@ -70,15 +69,16 @@ class WSHandler:
 
     async def _handle_project(self, request: pb.Request, response: pb.Response):
         vin = request.header.vin
-        self._notification_callback.on_request_received(f"Запрос проекта от {vin}")
+        request.project.name
+        await self._notification_callback.on_request_received(f"Запрос проекта от {vin}, '{request.project.name}'")
 
     async def _handle_logs_upload(self, request: pb.Request, response: pb.Response):
         vin = request.header.vin
-        self._notification_callback.on_request_received(f"Запрос на загрузку логов от {vin}")
+        await self._notification_callback.on_request_received(f"Запрос на загрузку логов от {vin}")
 
     async def _handle_flash_upload(self, request: pb.Request, response: pb.Response):
         vin = request.header.vin
-        self._notification_callback.on_request_received(f"Запрос на загрузку прошивки от {vin}")
+        await self._notification_callback.on_request_received(f"Запрос на загрузку прошивки от {vin}")
 
     async def run(self):
         self._server = await serve(self.handle, self._config.connection.host, self._config.connection.port,

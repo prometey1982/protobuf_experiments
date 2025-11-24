@@ -11,6 +11,8 @@ class NotificationCallbackTgBot(NotificationCallbackBase):
         self._config = config
         self._logger = logging.getLogger(__name__)
         self._application = Application.builder().token(self._config.bot.token).build()
+        self._notifications = []
+        self._stopped = True
         self.setup_handlers()
 
     def setup_handlers(self):
@@ -21,8 +23,17 @@ class NotificationCallbackTgBot(NotificationCallbackBase):
         await self._application.initialize()
         await self._application.start()
         await self._application.updater.start_polling()
+        self._stopped = False
+        while not self._stopped:
+            if len(self._notifications) > 0:
+                string_to_send = "\n".join(self._notifications[:10])
+                del self._notifications[:10]
+                await self.send_message_to_users(string_to_send)
+            await asyncio.sleep(1)
+
 
     async def stop(self):
+        self._stopped = True
         await self._application.updater.stop()
         await self._application.stop()
 
@@ -40,12 +51,12 @@ class NotificationCallbackTgBot(NotificationCallbackBase):
         )
 
     async def on_request_received(self, *args):
-        await self.send_message_to_users(args)
+        self._notifications.append(str(args))
 
-    async def send_message_to_users(self, *args):
-        self._logger.debug(args)
+    async def send_message_to_users(self, text: str):
+        self._logger.debug(text)
         for user_id in self._config.bot.users_to_notify:
-            await self.send_message_to_user(user_id, str(args))
+            await self.send_message_to_user(user_id, text)
 
     async def send_message_to_user(self, chat_id: int, text: str):
         try:

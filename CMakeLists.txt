@@ -32,6 +32,8 @@ add_executable(${PROJECT_NAME}
     ${PROTO_FILES}
 )
 
+target_compile_definitions (${PROJECT_NAME} PRIVATE -D_WIN32_WINNT=0x0601)
+
 target_link_libraries(${PROJECT_NAME} PRIVATE
     protobuf::libprotobuf
     boost::boost
