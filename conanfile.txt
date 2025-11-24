@@ -5,6 +5,7 @@ boost/1.86.0
 easyloggingpp/9.97.1
 sqlitecpp/3.3.2
 protobuf/6.30.1
+openssl/3.6.0
 
 [generators]
 CMakeDeps

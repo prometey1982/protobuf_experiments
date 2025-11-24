@@ -11,7 +11,9 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 find_package(yaml-cpp REQUIRED)
 find_package(libzippp REQUIRED)
 find_package(Easyloggingpp REQUIRED)
-find_package(SQLiteCpp  REQUIRED)
+find_package(SQLiteCpp REQUIRED)
+find_package(Boost REQUIRED)
+find_package(OpenSSL REQUIRED)
 
 FILE(GLOB SUB_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 FILE(GLOB HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h*)
@@ -32,6 +34,8 @@ add_executable(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
     protobuf::libprotobuf
+    boost::boost
+    openssl::openssl
 )
 
 # compile the message types
