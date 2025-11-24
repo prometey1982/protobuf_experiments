@@ -14,6 +14,7 @@ class WSHandler:
         self._data_provider = data_provider
         self._notification_callback = notification_callback
         self._logger = logging.getLogger(__name__)
+        self._websockets = []
         self._handlers = {
             pb.RequestType.REQ_AVAILABLE_PROJECTS: self._handle_available_projects,
             pb.RequestType.REQ_PROJECT: self._handle_project,
@@ -25,7 +26,13 @@ class WSHandler:
         self.ssl_context.load_cert_chain(self._config.connection.certificate)
 
     async def handle(self, websocket):
+        self._websockets.append(websocket)
         incoming_message = await websocket.recv()
+        self._logger.debug(f"Incoming message {incoming_message}, type {type(incoming_message)}")
+        if type(incoming_message) == str:
+            array_msg = bytearray()
+            array_msg.extend(map(ord, incoming_message))
+            incoming_message = array_msg
         request = pb.Request()
         request.ParseFromString(incoming_message)
         response = pb.Response()
@@ -57,6 +64,8 @@ class WSHandler:
             available_project.crc = project.crc
             available_projects.append(available_project)
         response.header.response_type = pb.ResponseType.RESP_AVAILABLE_PROJECTS
+        response.header.vin = vin
+        response.header.version = 1
         response.available_projects.available_projects.extend(available_projects)
 
     async def _handle_project(self, request: pb.Request, response: pb.Response):

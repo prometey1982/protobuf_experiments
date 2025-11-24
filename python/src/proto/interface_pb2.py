@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x15proto/interface.proto\x12\x14protobuf_experiments\"f\n\rRequestHeader\x12\x0f\n\x07version\x18\x01 \x01(\r\x12\x37\n\x0crequest_type\x18\x02 \x01(\x0e\x32!.protobuf_experiments.RequestType\x12\x0b\n\x03vin\x18\x03 \x01(\t\"\\\n\x0eResponseHeader\x12\x0f\n\x07version\x18\x01 \x01(\r\x12\x39\n\rresponse_type\x18\x02 \x01(\x0e\x32\".protobuf_experiments.ResponseType\"\xd2\x02\n\x07Request\x12\x33\n\x06header\x18\x01 \x01(\x0b\x32#.protobuf_experiments.RequestHeader\x12L\n\x12\x61vailable_projects\x18\x02 \x01(\x0b\x32..protobuf_experiments.AvailableProjectsRequestH\x00\x12\x37\n\x07project\x18\x03 \x01(\x0b\x32$.protobuf_experiments.ProjectRequestH\x00\x12>\n\x0blogs_upload\x18\x04 \x01(\x0b\x32\'.protobuf_experiments.LogsUploadRequestH\x00\x12@\n\x0c\x66lash_upload\x18\x05 \x01(\x0b\x32(.protobuf_experiments.FlashUploadRequestH\x00\x42\t\n\x07payload\"\x1a\n\x18\x41vailableProjectsRequest\"\x1e\n\x0eProjectRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"2\n\x11LogsUploadRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07payload\x18\x02 \x01(\x0c\"3\n\x12\x46lashUploadRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07payload\x18\x02 \x01(\x0c\"\xd4\x01\n\x08Response\x12\x34\n\x06header\x18\x01 \x01(\x0b\x32$.protobuf_experiments.ResponseHeader\x12M\n\x12\x61vailable_projects\x18\x02 \x01(\x0b\x32/.protobuf_experiments.AvailableProjectsResponseH\x00\x12\x38\n\x07project\x18\x03 \x01(\x0b\x32%.protobuf_experiments.ProjectResponseH\x00\x42\t\n\x07payload\"-\n\x10\x41vailableProject\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0b\n\x03\x63rc\x18\x02 \x01(\r\"_\n\x19\x41vailableProjectsResponse\x12\x42\n\x12\x61vailable_projects\x18\x01 \x03(\x0b\x32&.protobuf_experiments.AvailableProject\"\x1f\n\x0fProjectResponse\x12\x0c\n\x04\x64\x61ta\x18\x01 \x01(\x0c\"\x14\n\x12LogsUploadResponse\"\x15\n\x13\x46lashUploadResponse*e\n\x0bRequestType\x12\x1a\n\x16REQ_AVAILABLE_PROJECTS\x10\x00\x12\x0f\n\x0bREQ_PROJECT\x10\x01\x12\x13\n\x0fREQ_LOGS_UPLOAD\x10\x02\x12\x14\n\x10REQ_FLASH_UPLOAD\x10\x03*z\n\x0cResponseType\x12\x1b\n\x17RESP_AVAILABLE_PROJECTS\x10\x00\x12\x10\n\x0cRESP_PROJECT\x10\x02\x12\x14\n\x10RESP_LOGS_UPLOAD\x10\x03\x12\x15\n\x11RESP_FLASH_UPLOAD\x10\x04\x12\x0e\n\nRESP_ERROR\x10\x05\x42-\n\x14protobuf_experimentsB\rPBExperimentsP\x01\xa2\x02\x03PBEb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x15proto/interface.proto\x12\x14protobuf_experiments\"f\n\rRequestHeader\x12\x0f\n\x07version\x18\x01 \x01(\r\x12\x37\n\x0crequest_type\x18\x02 \x01(\x0e\x32!.protobuf_experiments.RequestType\x12\x0b\n\x03vin\x18\x03 \x01(\t\"i\n\x0eResponseHeader\x12\x0f\n\x07version\x18\x01 \x01(\r\x12\x39\n\rresponse_type\x18\x02 \x01(\x0e\x32\".protobuf_experiments.ResponseType\x12\x0b\n\x03vin\x18\x03 \x01(\t\"\xd2\x02\n\x07Request\x12\x33\n\x06header\x18\x01 \x01(\x0b\x32#.protobuf_experiments.RequestHeader\x12L\n\x12\x61vailable_projects\x18\x02 \x01(\x0b\x32..protobuf_experiments.AvailableProjectsRequestH\x00\x12\x37\n\x07project\x18\x03 \x01(\x0b\x32$.protobuf_experiments.ProjectRequestH\x00\x12>\n\x0blogs_upload\x18\x04 \x01(\x0b\x32\'.protobuf_experiments.LogsUploadRequestH\x00\x12@\n\x0c\x66lash_upload\x18\x05 \x01(\x0b\x32(.protobuf_experiments.FlashUploadRequestH\x00\x42\t\n\x07payload\"\x1a\n\x18\x41vailableProjectsRequest\"\x1e\n\x0eProjectRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"2\n\x11LogsUploadRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07payload\x18\x02 \x01(\x0c\"3\n\x12\x46lashUploadRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07payload\x18\x02 \x01(\x0c\"\xd4\x01\n\x08Response\x12\x34\n\x06header\x18\x01 \x01(\x0b\x32$.protobuf_experiments.ResponseHeader\x12M\n\x12\x61vailable_projects\x18\x02 \x01(\x0b\x32/.protobuf_experiments.AvailableProjectsResponseH\x00\x12\x38\n\x07project\x18\x03 \x01(\x0b\x32%.protobuf_experiments.ProjectResponseH\x00\x42\t\n\x07payload\"-\n\x10\x41vailableProject\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0b\n\x03\x63rc\x18\x02 \x01(\r\"_\n\x19\x41vailableProjectsResponse\x12\x42\n\x12\x61vailable_projects\x18\x01 \x03(\x0b\x32&.protobuf_experiments.AvailableProject\"-\n\x0fProjectResponse\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x02 \x01(\x0c\"\x14\n\x12LogsUploadResponse\"\x15\n\x13\x46lashUploadResponse*e\n\x0bRequestType\x12\x1a\n\x16REQ_AVAILABLE_PROJECTS\x10\x00\x12\x0f\n\x0bREQ_PROJECT\x10\x01\x12\x13\n\x0fREQ_LOGS_UPLOAD\x10\x02\x12\x14\n\x10REQ_FLASH_UPLOAD\x10\x03*z\n\x0cResponseType\x12\x1b\n\x17RESP_AVAILABLE_PROJECTS\x10\x00\x12\x10\n\x0cRESP_PROJECT\x10\x02\x12\x14\n\x10RESP_LOGS_UPLOAD\x10\x03\x12\x15\n\x11RESP_FLASH_UPLOAD\x10\x04\x12\x0e\n\nRESP_ERROR\x10\x05\x42-\n\x14protobuf_experimentsB\rPBExperimentsP\x01\xa2\x02\x03PBEb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -32,34 +32,34 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'proto.interface_pb2', _glob
 if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'\n\024protobuf_experimentsB\rPBExperimentsP\001\242\002\003PBE'
-  _globals['_REQUESTTYPE']._serialized_start=1188
-  _globals['_REQUESTTYPE']._serialized_end=1289
-  _globals['_RESPONSETYPE']._serialized_start=1291
-  _globals['_RESPONSETYPE']._serialized_end=1413
+  _globals['_REQUESTTYPE']._serialized_start=1215
+  _globals['_REQUESTTYPE']._serialized_end=1316
+  _globals['_RESPONSETYPE']._serialized_start=1318
+  _globals['_RESPONSETYPE']._serialized_end=1440
   _globals['_REQUESTHEADER']._serialized_start=47
   _globals['_REQUESTHEADER']._serialized_end=149
   _globals['_RESPONSEHEADER']._serialized_start=151
-  _globals['_RESPONSEHEADER']._serialized_end=243
-  _globals['_REQUEST']._serialized_start=246
-  _globals['_REQUEST']._serialized_end=584
-  _globals['_AVAILABLEPROJECTSREQUEST']._serialized_start=586
-  _globals['_AVAILABLEPROJECTSREQUEST']._serialized_end=612
-  _globals['_PROJECTREQUEST']._serialized_start=614
-  _globals['_PROJECTREQUEST']._serialized_end=644
-  _globals['_LOGSUPLOADREQUEST']._serialized_start=646
-  _globals['_LOGSUPLOADREQUEST']._serialized_end=696
-  _globals['_FLASHUPLOADREQUEST']._serialized_start=698
-  _globals['_FLASHUPLOADREQUEST']._serialized_end=749
-  _globals['_RESPONSE']._serialized_start=752
-  _globals['_RESPONSE']._serialized_end=964
-  _globals['_AVAILABLEPROJECT']._serialized_start=966
-  _globals['_AVAILABLEPROJECT']._serialized_end=1011
-  _globals['_AVAILABLEPROJECTSRESPONSE']._serialized_start=1013
-  _globals['_AVAILABLEPROJECTSRESPONSE']._serialized_end=1108
-  _globals['_PROJECTRESPONSE']._serialized_start=1110
-  _globals['_PROJECTRESPONSE']._serialized_end=1141
-  _globals['_LOGSUPLOADRESPONSE']._serialized_start=1143
-  _globals['_LOGSUPLOADRESPONSE']._serialized_end=1163
-  _globals['_FLASHUPLOADRESPONSE']._serialized_start=1165
-  _globals['_FLASHUPLOADRESPONSE']._serialized_end=1186
+  _globals['_RESPONSEHEADER']._serialized_end=256
+  _globals['_REQUEST']._serialized_start=259
+  _globals['_REQUEST']._serialized_end=597
+  _globals['_AVAILABLEPROJECTSREQUEST']._serialized_start=599
+  _globals['_AVAILABLEPROJECTSREQUEST']._serialized_end=625
+  _globals['_PROJECTREQUEST']._serialized_start=627
+  _globals['_PROJECTREQUEST']._serialized_end=657
+  _globals['_LOGSUPLOADREQUEST']._serialized_start=659
+  _globals['_LOGSUPLOADREQUEST']._serialized_end=709
+  _globals['_FLASHUPLOADREQUEST']._serialized_start=711
+  _globals['_FLASHUPLOADREQUEST']._serialized_end=762
+  _globals['_RESPONSE']._serialized_start=765
+  _globals['_RESPONSE']._serialized_end=977
+  _globals['_AVAILABLEPROJECT']._serialized_start=979
+  _globals['_AVAILABLEPROJECT']._serialized_end=1024
+  _globals['_AVAILABLEPROJECTSRESPONSE']._serialized_start=1026
+  _globals['_AVAILABLEPROJECTSRESPONSE']._serialized_end=1121
+  _globals['_PROJECTRESPONSE']._serialized_start=1123
+  _globals['_PROJECTRESPONSE']._serialized_end=1168
+  _globals['_LOGSUPLOADRESPONSE']._serialized_start=1170
+  _globals['_LOGSUPLOADRESPONSE']._serialized_end=1190
+  _globals['_FLASHUPLOADRESPONSE']._serialized_start=1192
+  _globals['_FLASHUPLOADRESPONSE']._serialized_end=1213
 # @@protoc_insertion_point(module_scope)

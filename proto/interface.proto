@@ -16,6 +16,7 @@ message RequestHeader {
 message ResponseHeader {
     uint32 version = 1;
     ResponseType response_type = 2;
+    string vin = 3;
 }
 
 enum RequestType {
@@ -78,7 +79,8 @@ message AvailableProjectsResponse {
 }
 
 message ProjectResponse {
-    bytes data = 1;
+    string name = 1;
+    bytes data = 2;
 }
 
 message LogsUploadResponse {
