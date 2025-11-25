@@ -2,138 +2,149 @@
 #include <iostream>
 #include "proto/interface.pb.h"
 
-using namespace protobuf_experiments;
-
-Client::Client(const std::string& host, const std::string& port, const std::string& path, const std::string& storage_path)
-    : host_(host)
-    , port_(port)
-    , path_(path)
-    , ssl_ctx_(ssl::context::tlsv12_client)
+Client::Client(const std::string& host, const std::string& port, const std::string& path, const std::string& storagePath)
+    : _host(host)
+    , _port(port)
+    , _path(path)
+    , _sslCtx(ssl::context::tlsv12_client)
 {
     // Настройка SSL контекста
-    ssl_ctx_.set_default_verify_paths();
-    ssl_ctx_.set_verify_mode(ssl::verify_peer);
+    _sslCtx.set_default_verify_paths();
+    _sslCtx.set_verify_mode(ssl::verify_peer);
     
     // Загружаем публичный ключ из srv_pub.pem
     try {
-        ssl_ctx_.load_verify_file("c:/misc/programming/protobuf_experiments/python/src/srv_pub.pem");
+        _sslCtx.load_verify_file("python/src/srv_pub.pem");
     } catch (const std::exception& e) {
         std::cerr << "Failed to load SSL certificate: " << e.what() << std::endl;
         // Продолжаем без проверки сертификата для демонстрации
-        ssl_ctx_.set_verify_mode(ssl::verify_none);
+        _sslCtx.set_verify_mode(ssl::verify_none);
     }
     
     // Создание менеджера проектов
-    project_manager_ = std::make_unique<ProjectManager>(storage_path);
+    _projectManager = std::make_unique<ProjectManager>(storagePath);
     
     // Создание WebSocket клиента
-    ws_client_ = std::make_shared<WebSocketClient>(ioc_, ssl_ctx_);
-    ws_client_->set_message_handler([this](const std::string& message) {
-        this->handle_message(message);
+    _wsClient = std::make_unique<WebSocketClient>(_ioc, _sslCtx);
+    _wsClient->setMessageHandler([this](const std::string& message) {
+        this->handleMessage(message);
     });
 }
 
-Client::~Client() {
+Client::~Client()
+{
     disconnect();
 }
 
-void Client::connect() {
-    ws_client_->connect(host_, port_, path_);
+void Client::connect()
+{
+    _wsClient->connect(_host, _port, _path);
     
     // Запуск io_context в отдельном потоке для асинхронной работы
     std::thread([this]() {
-        ioc_.run();
+        _ioc.run();
     }).detach();
 }
 
-void Client::disconnect() {
-    if (ws_client_) {
-        ws_client_->close();
+void Client::disconnect()
+{
+    if (_wsClient) {
+        _wsClient->close();
     }
-    ioc_.stop();
+    _ioc.stop();
 }
 
-ProjectManager& Client::get_project_manager() {
-    return *project_manager_;
+ProjectManager& Client::getProjectManager()
+{
+    return *_projectManager;
 }
 
-const ProjectManager& Client::get_project_manager() const {
-    return *project_manager_;
+const ProjectManager& Client::getProjectManager() const
+{
+    return *_projectManager;
 }
 
-void Client::request_available_projects(const std::string& vin) {
-    auto message = protobuf_experiments::MessageBuilder::build_available_projects_request(vin);
-    ws_client_->send(message);
+void Client::requestAvailableProjects(const std::string& vin)
+{
+    auto message = protobuf_experiments::MessageBuilder::buildAvailableProjectsRequest(vin);
+    _wsClient->send(message);
 }
 
-void Client::request_project(const std::string& vin, const std::string& project_name) {
+void Client::requestProject(const std::string& vin, const std::string& projectName)
+{
     // Проверяем, есть ли проект локально
-    if (project_manager_->is_project_available(vin, project_name)) {
-        std::cout << "Project " << project_name << " is already available locally" << std::endl;
-        if (project_received_callback_) {
-            project_received_callback_(vin, project_name, true);
+    if (_projectManager->isProjectAvailable(vin, projectName)) {
+        std::cout << "Project " << projectName << " is already available locally" << std::endl;
+        if (_projectReceivedCallback) {
+            _projectReceivedCallback(vin, projectName, true);
         }
         return;
     }
     
     // Если проекта нет, запрашиваем с сервера
-    auto message = protobuf_experiments::MessageBuilder::build_project_request(vin, project_name);
-    ws_client_->send(message);
+    auto message = protobuf_experiments::MessageBuilder::buildProjectRequest(vin, projectName);
+    _wsClient->send(message);
 }
 
-void Client::upload_logs(const std::string& vin, const std::string& log_name, const std::vector<uint8_t>& log_data) {
-    auto message = protobuf_experiments::MessageBuilder::build_logs_upload_request(vin, log_name, log_data);
-    ws_client_->send(message);
+void Client::uploadLogs(const std::string& vin, const std::string& logName, const std::vector<uint8_t>& logData)
+{
+    auto message = protobuf_experiments::MessageBuilder::buildLogsUploadRequest(vin, logName, logData);
+    _wsClient->send(message);
 }
 
-void Client::upload_flash(const std::string& vin, const std::string& flash_name, const std::vector<uint8_t>& flash_data) {
-    auto message = protobuf_experiments::MessageBuilder::build_flash_upload_request(vin, flash_name, flash_data);
-    ws_client_->send(message);
+void Client::uploadFlash(const std::string& vin, const std::string& flashName, const std::vector<uint8_t>& flashData)
+{
+    auto message = protobuf_experiments::MessageBuilder::buildFlashUploadRequest(vin, flashName, flashData);
+    _wsClient->send(message);
 }
 
-void Client::set_available_projects_callback(std::function<void(const std::string&, const std::vector<std::string>&)> callback) {
-    available_projects_callback_ = callback;
+void Client::setAvailableProjectsCallback(std::function<void(const std::string&, const std::vector<std::string>&)> callback)
+{
+    _availableProjectsCallback = callback;
 }
 
-void Client::set_project_received_callback(std::function<void(const std::string&, const std::string&, bool)> callback) {
-    project_received_callback_ = callback;
+void Client::setProjectReceivedCallback(std::function<void(const std::string&, const std::string&, bool)> callback)
+{
+    _projectReceivedCallback = callback;
 }
 
-void Client::set_upload_complete_callback(std::function<void(const std::string&, const std::string&, bool)> callback) {
-    upload_complete_callback_ = callback;
+void Client::setUploadCompleteCallback(std::function<void(const std::string&, const std::string&, bool)> callback)
+{
+    _uploadCompleteCallback = callback;
 }
 
-void Client::handle_message(const std::string& message) {
+void Client::handleMessage(const std::string& message)
+{
     std::cout << "Received message of size: " << message.size() << std::endl;
     
     // Парсинг protobuf сообщения
-    Response response;
+    protobuf_experiments::Response response;
     if (!response.ParseFromString(message)) {
         std::cerr << "Failed to parse protobuf response" << std::endl;
         return;
     }
     
-    const ResponseHeader& header = response.header();
+    const protobuf_experiments::ResponseHeader& header = response.header();
     std::string vin = header.vin();
     
     switch (header.response_type()) {
-        case RESP_AVAILABLE_PROJECTS:
-            process_available_projects_response(vin, response);
+        case protobuf_experiments::RESP_AVAILABLE_PROJECTS:
+            processAvailableProjectsResponse(vin, response);
             break;
-        case RESP_PROJECT:
-            process_project_response(vin, response);
+        case protobuf_experiments::RESP_PROJECT:
+            processProjectResponse(vin, response);
             break;
-        case RESP_LOGS_UPLOAD:
-            if (upload_complete_callback_) {
-                upload_complete_callback_(vin, "logs", true);
+        case protobuf_experiments::RESP_LOGS_UPLOAD:
+            if (_uploadCompleteCallback) {
+                _uploadCompleteCallback(vin, "logs", true);
             }
             break;
-        case RESP_FLASH_UPLOAD:
-            if (upload_complete_callback_) {
-                upload_complete_callback_(vin, "flash", true);
+        case protobuf_experiments::RESP_FLASH_UPLOAD:
+            if (_uploadCompleteCallback) {
+                _uploadCompleteCallback(vin, "flash", true);
             }
             break;
-        case RESP_ERROR:
+        case protobuf_experiments::RESP_ERROR:
             std::cerr << "Received error response" << std::endl;
             break;
         default:
@@ -142,40 +153,45 @@ void Client::handle_message(const std::string& message) {
     }
 }
 
-void Client::process_available_projects_response(const std::string& vin, const Response& response) {
+void Client::processAvailableProjectsResponse(const std::string& vin, const protobuf_experiments::Response& response)
+{
     if (!response.has_available_projects()) {
         std::cerr << "Available projects response missing payload" << std::endl;
         return;
     }
     
-    const AvailableProjectsResponse& available_projects_response = response.available_projects();
+    const protobuf_experiments::AvailableProjectsResponse& availableProjectsResponse = response.available_projects();
     std::vector<std::pair<std::string, uint32_t>> projects;
     
-    for (int i = 0; i < available_projects_response.available_projects_size(); ++i) {
-        const AvailableProject& project = available_projects_response.available_projects(i);
+    for (int i = 0; i < availableProjectsResponse.available_projects_size(); ++i) {
+        const protobuf_experiments::AvailableProject& project = availableProjectsResponse.available_projects(i);
         projects.emplace_back(project.name(), project.crc());
     }
     
-    project_manager_->set_available_projects(vin, projects);
+    _projectManager->setAvailableProjects(vin, projects);
     
-    if (available_projects_callback_) {
-        std::vector<std::string> project_names;
+    if (_availableProjectsCallback) {
+        std::vector<std::string> projectNames;
         for (const auto& project : projects) {
-            project_names.push_back(project.first);
+            projectNames.push_back(project.first);
         }
-        available_projects_callback_(vin, project_names);
+        _availableProjectsCallback(vin, projectNames);
     }
 }
 
-void Client::process_project_response(const std::string& vin, const Response& response) {
+void Client::processProjectResponse(const std::string& vin, const protobuf_experiments::Response& response)
+{
     if (!response.has_project()) {
         std::cerr << "Project response missing payload" << std::endl;
         return;
     }
     
-    const ProjectResponse& project_response = response.project();
-    const std::string& project_data = project_response.data();
-    std::vector<std::string> available_projects = project_manager_->get_available_projects(vin);
-    std::vector<uint8_t> data(project_data.begin(), project_data.end());
-    project_manager_->download_project(vin, project_response.name(), data);
+    const protobuf_experiments::ProjectResponse& projectResponse = response.project();
+    const std::string& projectData = projectResponse.data();
+    std::vector<uint8_t> data(projectData.begin(), projectData.end());
+    _projectManager->downloadProject(vin, projectResponse.name(), data);
+    
+    if (_projectReceivedCallback) {
+        _projectReceivedCallback(vin, projectResponse.name(), true);
+    }
 }

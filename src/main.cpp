@@ -2,7 +2,7 @@
 #include <thread>
 #include <chrono>
 #include "client/client.hpp"
-#include "project/project_manager.hpp"
+#include "project/ProjectManager.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -11,28 +11,28 @@ int main(int argc, char *argv[])
         std::string host = "127.0.0.1";
         std::string port = "8080";
         std::string path = "/wss";
-        std::string storage_path = "./projects";
+        std::string storagePath = "./projects";
         
-        // Создание клиента
-        Client client(host, port, path, storage_path);
+                // Создание клиента
+        Client client(host, port, path, storagePath);
 
-        // Установка callback функций
-        client.set_available_projects_callback([&client](const std::string& vin, const std::vector<std::string>& projects) {
+                // Установка callback функций
+        client.setAvailableProjectsCallback([&client](const std::string& vin, const std::vector<std::string>& projects) {
             std::cout << "Available projects for VIN " << vin << ":" << std::endl;
             for (const auto& project : projects) {
                 std::cout << "  - " << project << std::endl;
             }
         });
 
-        client.set_project_received_callback([](const std::string& vin, const std::string& project_name, bool success) {
+        client.setProjectReceivedCallback([](const std::string& vin, const std::string& projectName, bool success) {
             if (success) {
-                std::cout << "Project " << project_name << " received successfully for VIN " << vin << std::endl;
+                std::cout << "Project " << projectName << " received successfully for VIN " << vin << std::endl;
             } else {
-                std::cout << "Failed to receive project " << project_name << " for VIN " << vin << std::endl;
+                std::cout << "Failed to receive project " << projectName << " for VIN " << vin << std::endl;
             }
         });
         
-        client.set_upload_complete_callback([](const std::string& vin, const std::string& name, bool success) {
+        client.setUploadCompleteCallback([](const std::string& vin, const std::string& name, bool success) {
             if (success) {
                 std::cout << "Upload completed successfully for " << name << " (VIN: " << vin << ")" << std::endl;
             } else {
@@ -50,35 +50,35 @@ int main(int argc, char *argv[])
         // Демонстрация функционала
         std::string vin = "myvin";
         
-        // Запрос доступных проектов
+                // Запрос доступных проектов
         std::cout << "\nRequesting available projects..." << std::endl;
-        client.request_available_projects(vin);
+        client.requestAvailableProjects(vin);
         
         std::this_thread::sleep_for(std::chrono::seconds(1));
         
-        std::set<std::string> projectsToDownload;
-        for(const auto& projectName: client.get_project_manager().get_available_projects(vin)) {
+                std::set<std::string> projectsToDownload;
+        for(const auto& projectName: client.getProjectManager().getAvailableProjects(vin)) {
             projectsToDownload.insert(projectName);
         }
         // Запрос проекта
         for(const auto& project: projectsToDownload) {
             std::cout << "\nRequesting project..." << std::endl;
-            client.request_project(vin, project);
+            client.requestProject(vin, project);
         }
         
         std::this_thread::sleep_for(std::chrono::seconds(1));
         
-        // Загрузка логов (пример)
+                // Загрузка логов (пример)
         std::cout << "\nUploading logs..." << std::endl;
-        std::vector<uint8_t> log_data = {0x10, 0x20, 0x30, 0x40};
-        client.upload_logs(vin, "log1", log_data);
+        std::vector<uint8_t> logData = {0x10, 0x20, 0x30, 0x40};
+        client.uploadLogs(vin, "log1", logData);
         
         std::this_thread::sleep_for(std::chrono::seconds(1));
         
-        // Загрузка прошивки (пример)
+                // Загрузка прошивки (пример)
         std::cout << "\nUploading flash..." << std::endl;
-        std::vector<uint8_t> flash_data = {0x50, 0x60, 0x70, 0x80};
-        client.upload_flash(vin, "flash1", flash_data);
+        std::vector<uint8_t> flashData = {0x50, 0x60, 0x70, 0x80};
+        client.uploadFlash(vin, "flash1", flashData);
         
         // Ожидание завершения операций
         std::this_thread::sleep_for(std::chrono::seconds(3));

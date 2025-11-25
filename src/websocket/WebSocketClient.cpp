@@ -1,67 +1,73 @@
-#include "client.hpp"
+#include "WebSocketClient.hpp"
 #include <iostream>
 #include <thread>
 #include <boost/asio/connect.hpp>
 
 WebSocketClient::WebSocketClient(net::io_context& ioc, ssl::context& ctx)
-    : ioc_(ioc)
-    , ctx_(ctx)
-    , resolver_(net::make_strand(ioc))
-    , ws_(net::make_strand(ioc), ctx_)
+    : _ioc(ioc)
+    , _ctx(ctx)
+    , _resolver(net::make_strand(ioc))
+    , _ws(net::make_strand(ioc), _ctx)
 {
 }
 
-WebSocketClient::~WebSocketClient() {
+WebSocketClient::~WebSocketClient()
+{
     close();
 }
 
-void WebSocketClient::connect(const std::string& host, const std::string& port, const std::string& path) {
-    host_ = host;
-    path_ = path;
+void WebSocketClient::connect(const std::string& host, const std::string& port, const std::string& path)
+{
+    _host = host;
+    _path = path;
     
     auto self = shared_from_this();
     
-    resolver_.async_resolve(
+    _resolver.async_resolve(
         host,
         port,
         beast::bind_front_handler(
-            &WebSocketClient::on_resolve,
+            &WebSocketClient::onResolve,
             self
         )
     );
 }
 
-void WebSocketClient::send(const std::vector<uint8_t>& message) {
+void WebSocketClient::send(const std::vector<uint8_t>& message)
+{
     auto self = shared_from_this();
     
-    ws_.async_write(
+    _ws.async_write(
         net::buffer(message),
         beast::bind_front_handler(
-            &WebSocketClient::on_write,
+            &WebSocketClient::onWrite,
             self
         )
     );
 }
 
-void WebSocketClient::close() {
-    if (ws_.is_open()) {
+void WebSocketClient::close()
+{
+    if (_ws.is_open()) {
         auto self = shared_from_this();
         
-        ws_.async_close(
+        _ws.async_close(
             websocket::close_code::normal,
             beast::bind_front_handler(
-                &WebSocketClient::on_close,
+                &WebSocketClient::onClose,
                 self
             )
         );
     }
 }
 
-void WebSocketClient::set_message_handler(std::function<void(const std::string&)> handler) {
-    message_handler_ = handler;
+void WebSocketClient::setMessageHandler(std::function<void(const std::string&)> handler)
+{
+    _messageHandler = handler;
 }
 
-void WebSocketClient::on_resolve(beast::error_code ec, tcp::resolver::results_type results) {
+void WebSocketClient::onResolve(beast::error_code ec, tcp::resolver::results_type results)
+{
     if (ec) {
         std::cerr << "Resolve error: " << ec.message() << std::endl;
         return;
@@ -71,22 +77,23 @@ void WebSocketClient::on_resolve(beast::error_code ec, tcp::resolver::results_ty
     
     // Используем правильный метод для подключения к результатам резолвера
     net::async_connect(
-        beast::get_lowest_layer(ws_),
+        beast::get_lowest_layer(_ws),
         results,
         beast::bind_front_handler(
-            &WebSocketClient::on_connect,
+            &WebSocketClient::onConnect,
             self
         )
     );
 }
 
-void WebSocketClient::on_connect(beast::error_code ec, tcp::resolver::results_type::endpoint_type ep) {
+void WebSocketClient::onConnect(beast::error_code ec, tcp::resolver::results_type::endpoint_type ep)
+{
     if (ec) {
         std::cerr << "Connect error: " << ec.message() << std::endl;
         return;
     }
     
-    if (!SSL_set_tlsext_host_name(ws_.next_layer().native_handle(), host_.c_str())) {
+    if (!SSL_set_tlsext_host_name(_ws.next_layer().native_handle(), _host.c_str())) {
         ec = beast::error_code(static_cast<int>(::ERR_get_error()), net::error::get_ssl_category());
         std::cerr << "SSL set host error: " << ec.message() << std::endl;
         return;
@@ -94,16 +101,17 @@ void WebSocketClient::on_connect(beast::error_code ec, tcp::resolver::results_ty
     
     auto self = shared_from_this();
     
-    ws_.next_layer().async_handshake(
+    _ws.next_layer().async_handshake(
         ssl::stream_base::client,
         beast::bind_front_handler(
-            &WebSocketClient::on_ssl_handshake,
+            &WebSocketClient::onSslHandshake,
             self
         )
     );
 }
 
-void WebSocketClient::on_ssl_handshake(beast::error_code ec) {
+void WebSocketClient::onSslHandshake(beast::error_code ec)
+{
     if (ec) {
         std::cerr << "SSL handshake error: " << ec.message() << std::endl;
         return;
@@ -111,15 +119,16 @@ void WebSocketClient::on_ssl_handshake(beast::error_code ec) {
     
     auto self = shared_from_this();
     
-    ws_.async_handshake(host_, path_,
+    _ws.async_handshake(_host, _path,
         beast::bind_front_handler(
-            &WebSocketClient::on_handshake,
+            &WebSocketClient::onHandshake,
             self
         )
     );
 }
 
-void WebSocketClient::on_handshake(beast::error_code ec) {
+void WebSocketClient::onHandshake(beast::error_code ec)
+{
     if (ec) {
         std::cerr << "WebSocket handshake error: " << ec.message() << std::endl;
         return;
@@ -129,47 +138,50 @@ void WebSocketClient::on_handshake(beast::error_code ec) {
     
     auto self = shared_from_this();
     
-    ws_.async_read(
-        buffer_,
+    _ws.async_read(
+        _buffer,
         beast::bind_front_handler(
-            &WebSocketClient::on_read,
+            &WebSocketClient::onRead,
             self
         )
     );
 }
 
-void WebSocketClient::on_write(beast::error_code ec, std::size_t bytes_transferred) {
+void WebSocketClient::onWrite(beast::error_code ec, std::size_t bytesTransferred)
+{
     if (ec) {
         std::cerr << "Write error: " << ec.message() << std::endl;
         return;
     }
 }
 
-void WebSocketClient::on_read(beast::error_code ec, std::size_t bytes_transferred) {
+void WebSocketClient::onRead(beast::error_code ec, std::size_t bytesTransferred)
+{
     if (ec) {
         std::cerr << "Read error: " << ec.message() << std::endl;
         return;
     }
     
-    if (message_handler_) {
-        std::string message = beast::buffers_to_string(buffer_.data());
-        message_handler_(message);
+    if (_messageHandler) {
+        std::string message = beast::buffers_to_string(_buffer.data());
+        _messageHandler(message);
     }
     
-    buffer_.consume(buffer_.size());
+    _buffer.consume(_buffer.size());
     
     auto self = shared_from_this();
     
-    ws_.async_read(
-        buffer_,
+    _ws.async_read(
+        _buffer,
         beast::bind_front_handler(
-            &WebSocketClient::on_read,
+            &WebSocketClient::onRead,
             self
         )
     );
 }
 
-void WebSocketClient::on_close(beast::error_code ec) {
+void WebSocketClient::onClose(beast::error_code ec)
+{
     if (ec) {
         std::cerr << "Close error: " << ec.message() << std::endl;
     }

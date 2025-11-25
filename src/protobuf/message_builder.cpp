@@ -3,7 +3,8 @@
 
 namespace protobuf_experiments {
 
-std::vector<uint8_t> MessageBuilder::build_available_projects_request(const std::string& vin) {
+std::vector<uint8_t> MessageBuilder::buildAvailableProjectsRequest(const std::string& vin)
+{
     Request request;
     
     // Заполняем заголовок
@@ -16,10 +17,11 @@ std::vector<uint8_t> MessageBuilder::build_available_projects_request(const std:
     request.mutable_available_projects();
     // Для запроса доступных проектов полезная нагрузка пустая
     
-    return serialize_request(request);
+    return serializeRequest(request);
 }
 
-std::vector<uint8_t> MessageBuilder::build_project_request(const std::string& vin, const std::string& project_name) {
+std::vector<uint8_t> MessageBuilder::buildProjectRequest(const std::string& vin, const std::string& projectName)
+{
     Request request;
     
     // Заполняем заголовок
@@ -29,13 +31,14 @@ std::vector<uint8_t> MessageBuilder::build_project_request(const std::string& vi
     header->set_vin(vin);
     
     // Заполняем полезную нагрузку
-    ProjectRequest* project_request = request.mutable_project();
-    project_request->set_name(project_name);
+    ProjectRequest* projectRequest = request.mutable_project();
+    projectRequest->set_name(projectName);
     
-    return serialize_request(request);
+    return serializeRequest(request);
 }
 
-std::vector<uint8_t> MessageBuilder::build_logs_upload_request(const std::string& vin, const std::string& log_name, const std::vector<uint8_t>& payload) {
+std::vector<uint8_t> MessageBuilder::buildLogsUploadRequest(const std::string& vin, const std::string& logName, const std::vector<uint8_t>& payload)
+{
     Request request;
     
     // Заполняем заголовок
@@ -45,14 +48,15 @@ std::vector<uint8_t> MessageBuilder::build_logs_upload_request(const std::string
     header->set_vin(vin);
     
     // Заполняем полезную нагрузку
-    LogsUploadRequest* logs_upload = request.mutable_logs_upload();
-    logs_upload->set_name(log_name);
-    logs_upload->set_payload(std::string(reinterpret_cast<const char*>(payload.data()), payload.size()));
+    LogsUploadRequest* logsUpload = request.mutable_logs_upload();
+    logsUpload->set_name(logName);
+    logsUpload->set_payload(std::string(reinterpret_cast<const char*>(payload.data()), payload.size()));
     
-    return serialize_request(request);
+    return serializeRequest(request);
 }
 
-std::vector<uint8_t> MessageBuilder::build_flash_upload_request(const std::string& vin, const std::string& flash_name, const std::vector<uint8_t>& payload) {
+std::vector<uint8_t> MessageBuilder::buildFlashUploadRequest(const std::string& vin, const std::string& flashName, const std::vector<uint8_t>& payload)
+{
     Request request;
     
     // Заполняем заголовок
@@ -62,14 +66,15 @@ std::vector<uint8_t> MessageBuilder::build_flash_upload_request(const std::strin
     header->set_vin(vin);
     
     // Заполняем полезную нагрузку
-    FlashUploadRequest* flash_upload = request.mutable_flash_upload();
-    flash_upload->set_name(flash_name);
-    flash_upload->set_payload(std::string(reinterpret_cast<const char*>(payload.data()), payload.size()));
+    FlashUploadRequest* flashUpload = request.mutable_flash_upload();
+    flashUpload->set_name(flashName);
+    flashUpload->set_payload(std::string(reinterpret_cast<const char*>(payload.data()), payload.size()));
     
-    return serialize_request(request);
+    return serializeRequest(request);
 }
 
-std::vector<uint8_t> MessageBuilder::serialize_request(const Request& request) {
+std::vector<uint8_t> MessageBuilder::serializeRequest(const Request& request)
+{
     std::vector<uint8_t> serialized(request.ByteSizeLong());
     if (!request.SerializeToArray(serialized.data(), serialized.size())) {
         std::cerr << "Failed to serialize protobuf request" << std::endl;

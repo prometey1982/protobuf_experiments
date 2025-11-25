@@ -7,15 +7,16 @@
 
 namespace protobuf_experiments {
 
-class MessageBuilder {
+class MessageBuilder
+{
 public:
-    static std::vector<uint8_t> build_available_projects_request(const std::string& vin);
-    static std::vector<uint8_t> build_project_request(const std::string& vin, const std::string& project_name);
-    static std::vector<uint8_t> build_logs_upload_request(const std::string& vin, const std::string& log_name, const std::vector<uint8_t>& payload);
-    static std::vector<uint8_t> build_flash_upload_request(const std::string& vin, const std::string& flash_name, const std::vector<uint8_t>& payload);
+    static std::vector<uint8_t> buildAvailableProjectsRequest(const std::string& vin);
+    static std::vector<uint8_t> buildProjectRequest(const std::string& vin, const std::string& projectName);
+    static std::vector<uint8_t> buildLogsUploadRequest(const std::string& vin, const std::string& logName, const std::vector<uint8_t>& payload);
+    static std::vector<uint8_t> buildFlashUploadRequest(const std::string& vin, const std::string& flashName, const std::vector<uint8_t>& payload);
 
 private:
-    static std::vector<uint8_t> serialize_request(const Request& request);
+    static std::vector<uint8_t> serializeRequest(const Request& request);
 };
 
 }
