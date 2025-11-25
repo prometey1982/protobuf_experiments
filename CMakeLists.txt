@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(protobuf CONFIG REQUIRED)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(UNITY_BUILD ON)
 
 find_package(yaml-cpp REQUIRED)
 find_package(libzippp REQUIRED)
